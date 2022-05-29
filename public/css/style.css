@@ -1,0 +1,8 @@
+body {
+    background: url(../images/snout.jpg)
+}
+
+.jumbotron {
+    background: rgba(11,23,61,.5);
+    color: rgba(255,255,255,255)
+}
