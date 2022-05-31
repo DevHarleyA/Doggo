@@ -1,46 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/265ed8ed5a.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/style.css">
     <title>Doggo</title>
 </head>
+
 <body>
     <div class="container">
 
         <div class="page-header text-center">
-            <h1 class="title"><i class="fa-solid fa-dove"></i>Profile</h1>
-            <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+            <h1 class="title"><i class="fa-solid fa-dog"></i></i>Profile</h1>
+            <a href="/logout" class="btn btn-warning btn-sm">Logout</a>
         </div>
-    
+
         <div class="row">
             <!-- LOCAL INFORMATION -->
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 <div class="well">
-                    <h3><span class="fa fa-user"></span> Local</h3>
-    
+                    <h3><span class="fa fa-user"></span> User Profile</h3>
+
                     <% if (user.local.email) { %>
-                        <p>
-                            <!-- <strong>id</strong>: <%= user._id %><br> -->
-                            <strong>email</strong>: <%= user.local.email %><br>
-                            <!-- <strong>password</strong>: <%= user.local.password %> -->
-                        </p>
-    
-                        <a href="/unlink/local" class="btn btn-default">Delete Account</a>
+                        <span>
+                            <strong>First Name:</strong>
+                            <%= user.local.fname %><br>
+                                <strong>Last Name:</strong>
+                                <%= user.local.lname %><br>
+                                    <!-- <strong>password</strong>: <%= user.local.password %> -->
+                        </span>
+
+                        <!-- <a href="/unlink/local" class="btn btn-default">Delete Account</a>
                     <% } else { %>
                         <a href="/connect/local" class="btn btn-default">Connect Local</a>
-                    <% } %>
-    
+                    <% } %> -->
+                        <br>
+                        <br>
+
+                        <button id="new" class="btn btn-primary">New Pet</button>
+
+                        <br>
+                        <br>
+                        <form action="/new" method="POST" class="hide" id="newPet">
+                            <!-- User will click a button to register a new pet. Button will toggle class on this form (main.js & style.css) -->
+                            <label for="petName">What is your pet's name?</label><br>
+                            <input type="text" name="petName" placeholder="your pet's name" required>
+                            <label for="petBreed">What breed is your pet?</label><br>
+                            <input type="text" name="petBreed" placeholder="your pet's breed" required>
+                            <label for="petDOB">What is your pet's birthday? (optional)</label><br>
+                            <input type="date" name="petDOB" placeholder="age">
+                            <button type="submit">Add my pet!</button>
+                        </form>
+                        <!-- Add delete form here -->
                 </div>
             </div>
-            <div class="col-sm-6"></div>
+            <div class="col-sm-8">
+                <div class="well">
+                    <!-- consider changing color -->
+                    <h1 class="dashTitle">Your Pet's information</h1>
+                    <% for(let i=0; i < pets.length; i++ ) {%>
+                        <div class="col-sm-6">
+                            <div class="well">
+                                <p>
+                                    <span>Name: </span><span>
+                                        <%= pets[i].petName %>
+                                    </span>
+                                </p>
+                                <p>
+                                    <span>Breed: </span><span>
+                                        <%= pets[i].petBreed %>
+                                    </span>
+                                </p>
+                                <p>
+                                    <span>Birthday: </span><span>
+                                        <%= pets[i].petDOB %>
+                                    </span>
+                                </p>
+                                <p>
+                                    <span>Vet Visits: </span><span class="vetVisit">
+                                        <%= pets[i].vetVisit %>
+                                    </span>
+                                </p>
+                                Delete Pet?: <i class="fa-solid fa-ban fa-xl"></i>
+                            </div>
+                        </div>
+                        <% } %>
+                </div>
+            </div>
+
         </div>
-    
-    <script src="main.js"></script>
-    
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="well">
+                    <h2>Add a Concern:</h2>
+                    <form action="/newConcern" method="post">
+                        <input type="date" name="date"><br>
+                        <label for="petName">Pet's Name: </label><br>
+                        <select name="petName" required>
+                            <option value="">--Please choose your pet--</option>
+                            <% for(let i=0; i < pets.length; i++ ) {%>
+                                <option value="<%= pets[i].petName %>">
+                                    <%= pets[i].petName %>
+                                </option>
+                            <% } %>
+                        </select><br>
+                        <label for="concern">Type of Concern: </label><br>
+                        <select name="concern" required>
+                            <option value="">--Please choose your concern--</option>
+                            <option value="foodConcern">Food</option>
+                            <option value="waterConcern">Water</option>
+                            <option value="poopConcern">Poop</option>
+                            <option value="aggressionConcern">Aggression</option>
+                            <option value="Other">Other</option>
+                        </select><br>
+                            <label for="desc">Description: </label><br>
+                            <textarea name="desc" cols="30" rows="10" placeholder="type your update here"></textarea><br>
+                            <button type="submit">Submit</button>
+                    </form>
+                    
+                </div>
+                <!-- Issue Report Drop Down Menu => populate name in drop down, and populate concern. then text box -->
+            </div>
+            <div class="col-sm-8">
+                <div class="well">
+                    <h2>Issues to Discuss with the Vet</h2>
+                    <% for(let i=0; i < concerns.length; i++ ) {%>
+                        <div class="col-sm-6">
+                            <div class="well">
+                                <p>
+                                    <span>Date: </span><span>
+                                        <%= concerns[i].date %>
+                                    </span>
+                                </p>
+                                <p>
+                                    <span>Concern: </span><span>
+                                        <%= concerns[i].concern %>
+                                    </span>
+                                </p>
+                                <p>
+                                    <span>Description: </span><span>
+                                        <%= concerns[i].desc %>
+                                    </span>
+                                </p>
+                                <p>
+                                    Concern Resolved?: <i class="fa-solid fa-circle-check"></i>
+                                </p>
+                            </div>
+                        </div>
+                        <% } %>
+                </div>
+            </div>
+            <!-- <div class="col-sm-8">
+                <div class="well">
+                    <h2>Vet Visits & Notes</h2>
+                </div>
+            </div> -->
+        </div>
+
+        <script src="main.js"></script>
+
 </body>
+
 </html>

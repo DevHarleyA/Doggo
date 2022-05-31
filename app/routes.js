@@ -6,9 +6,17 @@ module.exports = function (app, passport, db) {
 
     // profile section
     app.get('/profile', isLoggedIn, function (req, res) {
-        res.render('profile.ejs', {
-            user: req.user,
+        petCollection.find().toArray((err, result) => {
+            if (err) return console.log(err)
+            console.log(result[0].concerns)
+            res.render('profile.ejs', {
+                user: req.user,
+                pets: result,
+                concerns: result[0].concerns
+            })
+            
         })
+        
     })
 
     app.get('/logout', function (req, res) {
@@ -17,6 +25,46 @@ module.exports = function (app, passport, db) {
     })
 
     // CRUD methods will go here.
+
+    // Create a New Pet
+    petCollection = db.collection('kibble')
+
+    app.post('/new', (req, res) => {
+        petCollection.save({ 
+            petName: req.body.petName, 
+            petBreed: req.body.petBreed, 
+            petDOB: req.body.petDOB, 
+            concerns: [], 
+            vetVisit: 0 }, (err, result) => {
+            if (err) return console.log(err)
+            console.log('saved to database')
+            res.redirect('/profile')
+        })
+    })
+
+    app.post('/newConcern', (req, res) => {
+        petCollection.updateOne({ 
+            petName: req.body.petName}, {
+                $push: {
+                    concerns: {date: req.body.date, concern: req.body.concern, desc: req.body.desc}
+                }
+            }, 
+            (err, result) => {
+            if (err) return console.log(err)
+            console.log('concern saved to database')
+            res.redirect('/profile')
+        })
+    })
+
+    // update => plus one for vet visit, minus one for vet visit
+   
+    // delete => delete a pet
+    app.delete('/deletePet', (req, res) => {
+        petCollection.findOneAndDelete({ petName: req.body.name}, (err, result) => {
+          if (err) return res.send(500, err)
+          res.send('Message deleted!')
+        })
+      })
 
     // =============================================================================
     // AUTHENTICATE (FIRST LOGIN) ==================================================

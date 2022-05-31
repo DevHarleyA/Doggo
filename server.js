@@ -34,7 +34,7 @@ app.set('view engine', 'ejs')
 app.use(session({
     secret: 'rcbootcamp2022a',
     resave: true,
-    saveUnitialized: true
+    saveUninitialized: true
 }))
 
 app.use(passport.initialize())
